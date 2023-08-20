@@ -1,0 +1,1150 @@
+// import React from 'react'
+// import TextField from '@mui/material/TextField'
+// import { Button } from '@mui/material'
+// import 'bootstrap/dist/css/bootstrap.min.css'
+
+// export default function ValidationForm() {
+//   return (
+//     <div className='r container'>
+//       <h3 className=''>Search Git Hub User</h3>
+//         <form>
+//           <div>
+//         <TextField label="Enter User Name" color="secondary" focused /><br/>
+//         <small>hi</small>
+//         </div>
+//         <div>
+//         <TextField label="" color="secondary" focused /><br/>
+//         <small>hi</small>
+//         </div>
+//         <div>
+//         <TextField label="Enter Your Name" color="secondary" focused /><br/>
+//         <small>hi</small>
+//         </div>
+//       </form>
+//     </div>
+//   )
+// }
+
+
+
+
+// import React, { useState } from 'react';
+// import { Button, Modal, TextField } from '@mui/material';
+// import SearchIcon from '@mui/icons-material/Search';
+// import Box from '@mui/material/Box';
+
+// const ValidationForm = () => {
+//   const [open, setOpen] = useState(false);
+//   const [name, setName] = useState('');
+//   const [user, setUser] = useState(null);
+//   const [error, setError] = useState(null);
+
+//   const handleOpen = () => {
+//     setOpen(true);
+//   };
+
+//   const handleClose = () => {
+//     setOpen(false);
+//   };
+
+//   const userInfo = (e) => {
+//     setName(e.target.value);
+//   };
+
+//   const showInfo = async () => {
+//     try {
+//       const response = await fetch(`https://api.github.com/users/${name}`);
+//       if (response.ok) {
+//         const userJson = await response.json();
+//         setUser(userJson);
+//         setError(null);
+//       } else {
+//         setUser(null);
+//         setError('User not found');
+//       }
+//     } catch (err) {
+//       setUser(null);
+//       setError('An error occurred');
+//     }
+//   };
+
+//   const ClearShowInfo = () => {
+//     handleClose();
+//   };
+
+//   return (
+//     <div
+//       style={{
+//         backgroundImage: "url('./Validation.jpg')", 
+//         minHeight: '100vh',
+//         backgroundSize: 'cover',
+//         display: 'flex',
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//       }}
+//     >
+//       <Box
+//         sx={{
+//           width: 300,
+//           height: 300,
+//           backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+//           transition: 'opacity 0.3s ease-in-out',
+//           '&:hover': {
+//             opacity: 0.9,
+//           },
+//         }}
+//       >
+//         <h1>GitHub User Info</h1>
+
+// <Button
+//   className="mb-3 mt-3 text-white"
+//   onClick={handleOpen}
+//   variant="contained"
+//   startIcon={<SearchIcon />}
+// >
+//   SEARCH USER HERE
+// </Button>
+// <Modal open={open} onClose={handleClose}>
+//   <div className="modal-container">
+//     <TextField
+//       label="Enter User Name"
+//       className="mt-3"
+//       variant="outlined"
+//       value={name}
+//       onChange={userInfo}
+//     />{' '}
+//     <br />
+//     <Button
+//       className="m-1 mt-2"
+//       variant="contained"
+//       color="primary"
+//       onClick={showInfo}
+//     >
+//       Search
+//     </Button>
+//     <Button
+//       className="m-1 mt-2"
+//       variant="contained"
+//       color="primary"
+//       onClick={ClearShowInfo}
+//     >
+//       Close
+//     </Button>
+//     {user && (
+//       <div className="text-black">
+//         <img
+//           style={{ width: '200px', height: '200px' }}
+//           src={user.avatar_url}
+//           alt="User Avatar"
+//         />
+//         <p>Login: {user.id}</p>
+//         <p>Name: {user.login}</p>
+//         <p>Followers: {user.followers}</p>
+//         <p>Public Repositories: {user.public_repos}</p>
+//       </div>
+//     )}
+//     {error && <p>Error: {error}</p>}
+//   </div>
+// </Modal>
+//       </Box>
+//     </div>
+//   );
+// };
+
+// export default ValidationForm;
+
+
+
+
+
+
+
+
+
+
+corrct formimport React, { useState } from 'react';
+import { Button, TextField } from '@mui/material';
+import backgroundImage from './4853433.jpg';
+import { Formik, Form, ErrorMessage } from 'formik';
+
+const ValidationForm = () => {
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+
+  const showInfo = async (name) => {
+    try {
+      const response = await fetch(`https://api.github.com/users/${name}`);
+      if (response.ok) {
+        const userJson = await response.json();
+        setUser(userJson);
+        setError(null);
+      } else {
+        setUser(null);
+        setError('User not found');
+      }
+    } catch (err) {
+      setUser(null);
+      setError('An error occurred');
+    }
+  };
+
+  return (
+    <>
+      <div
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          minHeight: '100vh',
+          backgroundSize: 'cover',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}
+      >
+        <div className='p-3 bg-white' style={{ borderRadius: '20px' }}>
+          <h1>GitHub User Info</h1>
+          <Formik
+            initialValues={{ name: '' }}
+            validate={(values) => {
+              const errors = {};
+              if (!/^[A-Za-z]{1,15}$/.test(values.name)) {
+                errors.name = 'Name must be 2 to 15 alphabetic characters';
+              }
+              return errors;
+            }}
+            onSubmit={(values) => {
+              showInfo(values.name);
+            }}
+          >
+            {({ values, handleChange, handleSubmit, errors }) => (
+              <Form>
+                <TextField
+                  label="Enter User Name"
+                  className="mt-3"
+                  variant="outlined"
+                  name="name"
+                  value={values.name}
+                  onChange={handleChange}
+                  error={!!errors.name}
+                  helperText={<ErrorMessage name="name" />}
+                />
+                <br />
+                <Button
+                  className="m-3"
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                >
+                  Search
+                </Button>
+                <Button className="m-2" variant="contained" color="primary" type='submit'>
+                  Submit
+                </Button>
+                {user && (
+                  <div className="text-black">
+                    <img
+                      style={{ width: '200px', height: '200px' }}
+                      src={user.avatar_url}
+                      alt="User Avatar"
+                    />
+                    <p>Login: {user.id}</p>
+                    <p>Name: {user.login}</p>
+                    <p>Followers: {user.followers}</p>
+                    <p>Public Repositories: {user.public_repos}</p>
+                  </div>
+                )}
+                {error && <p>Error: {error}</p>}
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default ValidationForm;
+
+
+
+Correct code using Two pages
+----------============================================================--
+// import React, { useState } from 'react';
+// import { Button, Modal, TextField } from '@mui/material';
+// import SearchIcon from '@mui/icons-material/Search';
+// import { useFormik } from "formik";
+// import { ValidationRules } from "./ValidationRules";
+
+// import backgroundImage from './4853433.jpg';
+
+// const ValidationForm = () => {
+//   const [name, setName] = useState('');
+//   const [user, setUser] = useState(null);
+//   const [error, setError] = useState(null);
+
+//   const initialValues = {
+//     userName: "",
+   
+//   };
+
+//   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+//     useFormik({
+//       initialValues,
+//       validationSchema: ValidationRules,
+//       onSubmit: (values, action) => {
+//         action.resetForm();
+//       },
+//     });
+
+//   console.log(errors);
+
+  
+//   const userInfo = (e) => {
+//     setName(e.target.value);
+//   };
+
+//   const showInfo = async () => {
+//     try {
+//       const response = await fetch(`https://api.github.com/users/${name}`);
+//       if (response.ok) {
+//         const userJson = await response.json();
+//         setUser(userJson);
+//         setError(null);
+//       } else {
+//         setUser(null);
+//         setError('User not found');
+//       }
+//     } catch (err) {
+//       setUser(null);
+//       setError('An error occurred');
+//     }
+//   };
+
+ 
+
+//   return (
+//     <>
+//       <div
+//         style={{
+//           backgroundImage: `url(${backgroundImage})`, minHeight: '100vh', backgroundSize: 'cover', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
+//         }}>
+//         <div  className='p-3 bg-white'  style={{ borderRadius:"20px"}}>
+//           <h1>GitHub User Info</h1>
+//           <div>
+//             <TextField
+//             value={values.userName}
+//             onChange =>( {handleChange , userInfo})
+//             onBlur={handleBlur}
+//             name='userName'
+//               label="Enter User Name"
+//               className="mt-3"
+//               variant="outlined"
+             
+//               /><br/>
+//             <Button
+//               className="m-3"
+//               variant="contained"
+//               color="primary"
+//               onClick={showInfo}
+//             >
+//               Search
+//             </Button>
+//             <Button
+//               className="m-2"
+//               variant="contained"
+//               color="primary"
+//             >
+//               Close
+//             </Button>
+//             {user && (
+//               <div className="text-black">
+//                 <img
+//                   style={{ width: '200px', height: '200px' }}
+//                   src={user.avatar_url}
+//                   alt="User Avatar"
+//                 />
+//                 <p>Login: {user.id}</p>
+//                 <p>Name: {user.login}</p>
+//                 <p>Followers: {user.followers}</p>
+//                 <p>Public Repositories: {user.public_repos}</p>
+//               </div>
+//             )}
+//             {error && <p>Error: {error}</p>}
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };
+
+// export default ValidationForm;
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useState } from 'react';
+import { Button, TextField } from '@mui/material';
+import { useFormik } from 'formik';
+import * as Yup from 'yup'; // You need to import Yup for validation
+
+import backgroundImage from './4853433.jpg';
+
+const ValidationForm = () => {
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+
+  const initialValues = {
+    userName: '',
+  };
+
+  const ValidationRules = Yup.object({
+    userName: Yup.string()
+      .min(2, 'Name must be at least 2 characters')
+      .max(15, 'Name must be less than 16 characters')
+      .required('Required'),
+  });
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema: ValidationRules,
+    onSubmit: (values, action) => {
+      showInfo(values.userName); 
+      action.resetForm();
+    },
+  });
+
+  const showInfo = async (name) => {
+    try {
+      const response = await fetch(`https://api.github.com/users/${name}`);
+      if (response.ok) {
+        const userJson = await response.json();
+        setUser(userJson);
+        setError(null);
+      } else {
+        setUser(null);
+        setError('User not found');
+      }
+    } catch (err) {
+      setUser(null);
+      setError('An error occurred');
+    }
+  };
+
+  return (
+    <div
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        minHeight: '100vh',
+        backgroundSize: 'cover',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+      }}
+    >
+      <div className='p-3 bg-white' style={{ borderRadius: '20px' }}>
+        <h1>GitHub User Info</h1>
+        <form onSubmit={formik.handleSubmit}>
+          <TextField
+            name='userName'
+            label='Enter User Name'
+            className='mt-3'
+            variant='outlined'
+            value={formik.values.userName}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.userName && Boolean(formik.errors.userName)}
+            helperText={formik.touched.userName && formik.errors.userName}
+          />
+          <br />
+          <Button
+            type='submit'
+            className='m-3'
+            variant='contained'
+            color='primary'
+          >
+            Search
+          </Button>
+          <Button className='m-2' variant='contained' color='primary'>
+            Close
+          </Button>
+          {user && (
+            <div className='text-black'>
+              <img
+                style={{ width: '200px', height: '200px' }}
+                src={user.avatar_url}
+                alt='User Avatar'
+              />
+              <p>Login: {user.id}</p>
+              <p>Name: {user.login}</p>
+              <p>Followers: {user.followers}</p>
+              <p>Public Repositories: {user.public_repos}</p>
+            </div>
+          )}
+          {error && <p>Error: {error}</p>}
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default ValidationForm;
+
+
+
+
+
+import * as Yup from "yup";
+
+export  const ValidationRules =Yup.object({
+    userName: Yup.string().min(2).max(25).required("Please enter your name"),
+})---------------------------===========================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // import React, { useState } from 'react';
+// // import { Button, Modal, TextField } from '@mui/material';
+// // import SearchIcon from '@mui/icons-material/Search';
+// // import { useFormik } from "formik";
+// // import { ValidationRules } from "./ValidationRules";
+
+// // import backgroundImage from './4853433.jpg';
+
+// // const ValidationForm = () => {
+// //   const [name, setName] = useState('');
+// //   const [user, setUser] = useState(null);
+// //   const [error, setError] = useState(null);
+
+// //   const initialValues = {
+// //     userName: "",
+   
+// //   };
+
+// //   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+// //     useFormik({
+// //       initialValues,
+// //       validationSchema: ValidationRules,
+// //       onSubmit: (values, action) => {
+// //         action.resetForm();
+// //       },
+// //     });
+
+// //   console.log(errors);
+
+  
+// //   const userInfo = (e) => {
+// //     setName(e.target.value);
+// //   };
+
+// //   const showInfo = async () => {
+// //     try {
+// //       const response = await fetch(`https://api.github.com/users/${name}`);
+// //       if (response.ok) {
+// //         const userJson = await response.json();
+// //         setUser(userJson);
+// //         setError(null);
+// //       } else {
+// //         setUser(null);
+// //         setError('User not found');
+// //       }
+// //     } catch (err) {
+// //       setUser(null);
+// //       setError('An error occurred');
+// //     }
+// //   };
+
+ 
+
+// //   return (
+// //     <>
+// //       <div
+// //         style={{
+// //           backgroundImage: `url(${backgroundImage})`, minHeight: '100vh', backgroundSize: 'cover', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
+// //         }}>
+// //         <div  className='p-3 bg-white'  style={{ borderRadius:"20px"}}>
+// //           <h1>GitHub User Info</h1>
+// //           <div>
+// //             <TextField
+// //             value={values.userName}
+// //             onChange =>( {handleChange , userInfo})
+// //             onBlur={handleBlur}
+// //             name='userName'
+// //               label="Enter User Name"
+// //               className="mt-3"
+// //               variant="outlined"
+             
+// //               /><br/>
+// //             <Button
+// //               className="m-3"
+// //               variant="contained"
+// //               color="primary"
+// //               onClick={showInfo}
+// //             >
+// //               Search
+// //             </Button>
+// //             <Button
+// //               className="m-2"
+// //               variant="contained"
+// //               color="primary"
+// //             >
+// //               Close
+// //             </Button>
+// //             {user && (
+// //               <div className="text-black">
+// //                 <img
+// //                   style={{ width: '200px', height: '200px' }}
+// //                   src={user.avatar_url}
+// //                   alt="User Avatar"
+// //                 />
+// //                 <p>Login: {user.id}</p>
+// //                 <p>Name: {user.login}</p>
+// //                 <p>Followers: {user.followers}</p>
+// //                 <p>Public Repositories: {user.public_repos}</p>
+// //               </div>
+// //             )}
+// //             {error && <p>Error: {error}</p>}
+// //           </div>
+// //         </div>
+// //       </div>
+// //     </>
+// //   );
+// // };
+
+// // export default ValidationForm;
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState } from 'react';
+// import { Button, TextField } from '@mui/material';
+// import { useFormik } from 'formik';
+// import * as Yup from 'yup'; 
+
+// import backgroundImage from './4853433.jpg';
+
+// const ValidationForm = () => {
+//   const [user, setUser] = useState(null);
+//   const [error, setError] = useState(null);
+
+//   const initialValues = {
+//     userName: '',
+//   };
+//   const ValidationRules =Yup.object({
+//     userName: Yup.string().min(2).max(10).required("Please enter your name"),
+// })
+
+//   const formik = useFormik({
+//     initialValues,
+//     validationSchema: ValidationRules,
+//     onSubmit: (values, action) => {
+//       showInfo(values.userName); 
+//       action.resetForm();
+//     },
+//   });
+
+//   const showInfo = async (name) => {
+//     try {
+//       const response = await fetch(`https://api.github.com/users/${name}`);
+//       if (response.ok) {
+//         const userJson = await response.json();
+//         setUser(userJson);
+//         setError(null);
+//       } else {
+//         setUser(null);
+//         setError('User not found');
+//       }
+//     } catch (err) {
+//       setUser(null);
+//       setError('An error occurred');
+//     }
+//   };
+
+//   return (
+//     <div
+//       style={{
+//         backgroundImage: `url(${backgroundImage})`,
+//         minHeight: '100vh',
+//         backgroundSize: 'cover',
+//         display: 'flex',
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//         flexDirection: 'column',
+//       }}
+//     >
+//     <div className='p-3 bg-white' style={{ borderRadius: '20px', boxShadow: '2px 2px 2px 1px rgba(0, 0, 0, 0.2)' }}>
+
+//         <h1>GitHub User Info</h1>
+//         <form onSubmit={formik.handleSubmit}>
+//           <TextField
+//             name='userName'
+//             label='Enter User Name'
+//             className='mt-3'
+//             variant='outlined'
+//             value={formik.values.userName}
+//             onChange={formik.handleChange}
+      
+//             // error={formik.touched.userName && Boolean(formik.errors.userName)}
+//             helperText={formik.touched.userName && formik.errors.userName}
+//           />
+//           <br />
+//           <Button
+//             type='submit'
+//             className='m-3'
+//             variant='contained'
+//             color='primary'
+//           >
+//             Search
+//           </Button>
+//           <Button className='m-2' variant='contained' color='primary'>
+//             Close
+//           </Button>
+//           {user && (
+//             <div className='text-black'>
+//               <img
+//                 style={{ width: '200px', height: '200px' }}
+//                 src={user.avatar_url}
+//                 alt='User Avatar'
+//               />
+//               <p>Login: {user.id}</p>
+//               <p>Name: {user.login}</p>
+//               <p>Followers: {user.followers}</p>
+//               <p>Public Repositories: {user.public_repos}</p>
+//             </div>
+//           )}
+//           {error && <p>Error: {error}</p>}
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ValidationForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+all ok
+
+// // Code without loader
+// import React, { useState } from 'react';
+// import { Button, TextField } from '@mui/material';
+// import { useFormik } from 'formik';
+// import * as Yup from 'yup';
+
+// import backgroundImage from './4853433.jpg';
+
+// const ValidationForm = () => {
+//   const [user, setUser] = useState(null);
+//   const [error, setError] = useState(null);
+
+//   const initialValues = {
+//     userName: '',
+//   };
+
+//   const ValidationRules = Yup.object({
+//     userName: Yup.string().min(2).max(20).required("Please enter your name"),
+//   });
+
+//   const formik = useFormik({
+//     initialValues,
+//     validationSchema: ValidationRules,
+//     onSubmit: (values, action) => {
+//       showInfo(values.userName);
+//       action.resetForm();
+//     },
+//   });
+
+//   const showInfo = async (name) => {
+//     try {
+//       const response = await fetch(`https://api.github.com/users/${name}`);
+//       if (response.ok) {
+//         const userJson = await response.json();
+//         setUser(userJson);
+//         setError(null);
+//       } else {
+//         setUser(null);
+//         setError('User not found');
+//       }
+//     } catch (err) {
+//       setUser(null);
+//       setError('An error occurred');
+//     }
+//   };
+
+//   const handleClear = () => {
+//     formik.resetForm();
+//     setUser(null); 
+//   };
+
+//   return (
+//     <div
+//       style={{
+//         backgroundImage: `url(${backgroundImage})`,
+//         minHeight: '100vh',
+//         backgroundSize: 'cover',
+//         display: 'flex',
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//         flexDirection: 'column',
+//         textAlign: 'center',
+//       }}
+//     >
+//       <div className='p-3 bg-white' style={{ borderRadius: '20px', boxShadow: '2px 2px 2px 1px rgba(0, 0, 0, 0.2)' }}>
+//         <h1>GitHub User Info</h1>
+//         <form onSubmit={formik.handleSubmit}>
+//           <TextField
+//             name='userName'
+//             label='Enter User Name'
+//             className='mt-3'
+//             variant='outlined'
+//             value={formik.values.userName}
+//             onChange={formik.handleChange}
+//             helperText={formik.touched.userName && formik.errors.userName}
+//           />
+//           <br />
+//           <Button
+//             type='submit'
+//             className='m-3'
+//             variant='contained'
+//             color='primary'
+//           >
+//             Search
+//           </Button>
+//           <Button
+//             className='m-2'
+//             variant='contained'
+//             color='primary'
+//             onClick={handleClear}
+//           >
+//             Clear
+//           </Button>
+//           <div className='text-center'>      
+//                 {user && (
+//             <div className='text-black'>
+//               <img
+//                 style={{ width: '200px', height: '200px' ,borderRadius:'90px',border:'2px solid grey' }}
+//                 src={user.avatar_url}
+//                 alt='User Avatar'
+//               />
+//               <p><span style={{fontWeight:'bold'}}> Login-id: </span>  <span className='text-success'> {user.id} </span></p>
+//               <p><span  style={{fontWeight:'bold'}}> Name: </span> {user.login}</p>
+//               <p><span  style={{fontWeight:'bold'}}> Followers:</span> {user.followers}</p>
+//               <p ><span  style={{fontWeight:'bold'}}>Following: </span> {user.following} </p>
+//               <p ><span  style={{fontWeight:'bold'}}>Public Repositories: </span>  <span className='text-danger'> {user.public_repos} </span> </p>
+             
+//             </div>
+//           )}
+//           {error && <p>Error: {error}</p>}
+//           </div>
+ 
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ValidationForm;
+
+
+
+
+import React, { useState } from 'react';
+import { Button, TextField } from '@mui/material';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import './ValidationAnimation.css'
+
+import backgroundImage from './4853433.jpg';
+
+const ValidationForm = () => {
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+
+  const initialValues = {
+    userName: '',
+  };
+
+  const ValidationRules = Yup.object({
+    userName: Yup.string().min(2).max(20).required("Please enter your name"),
+  });
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema: ValidationRules,
+    onSubmit: (values, action) => {
+      showInfo(values.userName);
+      action.resetForm();
+    },
+  });
+
+  const showInfo = async (name) => {
+    try {
+      const response = await fetch(`https://api.github.com/users/${name}`);
+      if (response.ok) {
+        const userJson = await response.json();
+        setUser(userJson);
+        setError(null);
+      } else {
+        setUser(null);
+        setError('User not found');
+      }
+    } catch (err) {
+      setUser(null);
+      setError('An error occurred');
+    }
+  };
+
+  const handleClear = () => {
+    formik.resetForm();
+    setUser(null); 
+  };
+
+  return (
+    <div
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        minHeight: '100vh',
+        backgroundSize: 'cover',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        textAlign: 'center',
+      }}
+    >
+      <div className='p-3 bg-white' style={{ borderRadius: '20px', boxShadow: '2px 2px 2px 1px rgba(0, 0, 0, 0.2)' }}>
+        <h1>GitHub User Info</h1>
+        <form onSubmit={formik.handleSubmit}>
+          <TextField
+            name='userName'
+            label='Enter User Name'
+            className='mt-3'
+            variant='outlined'
+            value={formik.values.userName}
+            onChange={formik.handleChange}
+            helperText={formik.touched.userName && formik.errors.userName}
+          />
+          <br />
+          <Button
+            type='submit'
+            className='m-3'
+            variant='contained'
+            color='primary'
+          >
+            Search
+          </Button>
+          <Button
+            className='m-2'
+            variant='contained'
+            color='primary'
+            onClick={handleClear}
+          >
+            Clear
+          </Button>
+          <div className='text-center'>      
+            {user && (
+              <div className='text-black'>
+                <img
+                  style={{ width: '200px', height: '200px', borderRadius: '90px', border: '2px solid grey' }}
+                  src={user.avatar_url}
+                  alt='User Avatar'
+                />
+                <p><span style={{fontWeight:'bold'}}> Login-id: </span>  <span className='text-success'> {user.id} </span></p>
+                <p className="fadeIn"><span  style={{fontWeight:'bold'}}> Name: </span> {user.login}</p>
+                <p className="fadeIn"><span  style={{fontWeight:'bold'}}> Followers:</span> {user.followers}</p>
+                <p className="fadeIn"><span  style={{fontWeight:'bold'}}>Following: </span> {user.following} </p>
+                <p className="fadeIn"><span  style={{fontWeight:'bold'}}>Public Repositories: </span>  <span className='text-danger'> {user.public_repos} </span> </p>
+              </div>
+            )}
+            {error && <p>Error: {error}</p>}
+          </div>
+ 
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default ValidationForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // Code without loader
+// import React, { useState } from 'react';
+// import { Button, TextField } from '@mui/material';
+// import { useFormik } from 'formik';
+// import * as Yup from 'yup';
+
+// import backgroundImage from './4853433.jpg';
+
+// const ValidationForm = () => {
+//   const [user, setUser] = useState(null);
+//   const [error, setError] = useState(null);
+
+//   const initialValues = {
+//     userName: '',
+//   };
+
+//   const ValidationRules = Yup.object({
+//     userName: Yup.string().min(2).max(20).required("Please enter your name"),
+//   });
+
+//   const formik = useFormik({
+//     initialValues,
+//     validationSchema: ValidationRules,
+//     onSubmit: (values, action) => {
+//       showInfo(values.userName);
+//       action.resetForm();
+//     },
+//   });
+
+//   const showInfo = async (name) => {
+//     try {
+//       const response = await fetch(`https://api.github.com/users/${name}`);
+//       if (response.ok) {
+//         const userJson = await response.json();
+//         setUser(userJson);
+//         setError(null);
+//       } else {
+//         setUser(null);
+//         setError('User not found');
+//       }
+//     } catch (err) {
+//       setUser(null);
+//       setError('An error occurred');
+//     }
+//   };
+
+//   const handleClear = () => {
+//     formik.resetForm();
+//     setUser(null); 
+//   };
+
+//   return (
+//     <div
+//       style={{
+//         backgroundImage: `url(${backgroundImage})`,
+//         minHeight: '100vh',
+//         backgroundSize: 'cover',
+//         display: 'flex',
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//         flexDirection: 'column',
+//         textAlign: 'center',
+//       }}
+//     >
+//       <div className='p-3 bg-white' style={{ borderRadius: '20px', boxShadow: '2px 2px 2px 1px rgba(0, 0, 0, 0.2)' }}>
+//         <h1>GitHub User Info</h1>
+//         <form onSubmit={formik.handleSubmit}>
+//           <TextField
+//             name='userName'
+//             label='Enter User Name'
+//             className='mt-3'
+//             variant='outlined'
+//             value={formik.values.userName}
+//             onChange={formik.handleChange}
+//             helperText={formik.touched.userName && formik.errors.userName}
+//           />
+//           <br />
+//           <Button
+//             type='submit'
+//             className='m-3'
+//             variant='contained'
+//             color='primary'
+//           >
+//             Search
+//           </Button>
+//           <Button
+//             className='m-2'
+//             variant='contained'
+//             color='primary'
+//             onClick={handleClear}
+//           >
+//             Clear
+//           </Button>
+//           <div className='text-center'>      
+//                 {user && (
+//             <div className='text-black'>
+//               <img
+//                 style={{ width: '200px', height: '200px' ,borderRadius:'90px',border:'2px solid grey' }}
+//                 src={user.avatar_url}
+//                 alt='User Avatar'
+//               />
+//               <p><span style={{fontWeight:'bold'}}> Login-id: </span>  <span className='text-success'> {user.id} </span></p>
+//               <p><span  style={{fontWeight:'bold'}}> Name: </span> {user.login}</p>
+//               <p><span  style={{fontWeight:'bold'}}> Followers:</span> {user.followers}</p>
+//               <p ><span  style={{fontWeight:'bold'}}>Following: </span> {user.following} </p>
+//               <p ><span  style={{fontWeight:'bold'}}>Public Repositories: </span>  <span className='text-danger'> {user.public_repos} </span> </p>
+             
+//             </div>
+//           )}
+//           {error && <p>Error: {error}</p>}
+//           </div>
+ 
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ValidationForm;
+
